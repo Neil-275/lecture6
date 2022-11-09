@@ -1,29 +1,48 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'posts/style.css' %}">
     <title>Scroll</title>
     <script>
 
         let start=1,end=10;
-        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
         function f(){
             fetch(`http://127.0.0.1:8000/posts?start=${start}&end=${end}`)
             .then(response => response.json())
             .then(data =>{
-                for (let i=start;i<end;i++)
-                    document.querySelector("#posts").append(data[i]);
+                data.forEach(element => {
+                    const post= document.createElement('div');
+                    post.className= 'post';
+                    post.innerHTML= element;
+                    document.querySelector("#posts").append(post);
+                });
+                    
             })
+            
+            console.log ("hello");
             start=end+1;
             end+=10;
+            sleep(5000);
         }
-
-        document.addEventListener("DOMContentLoaded",()=>{
+        function check(){
+            if (window.scrollY+window.innerHeight >= document.body.offsetHeight)
+                console.log("True");
+            else 
+                console.log("False");
+        }
+        document.addEventListener("DOMContentLoaded",f());
+        window.onscroll=()=>{
             if (window.scrollY+window.innerHeight >= document.body.offsetHeight)
                 f();
-        })
+        }
+        
     </script>
 </head>
 <body>
