@@ -9,45 +9,46 @@
     <title>Scroll</title>
     <script>
 
-        let start=1,end=10;
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
+        const quanity=20;
+        let cnt=1;
+
+        document.addEventListener("DOMContentLoaded",f());
+
         function f(){
+            const start= cnt;
+            const end = start + quanity-1;
+            cnt= end+1;
             fetch(`http://127.0.0.1:8000/posts?start=${start}&end=${end}`)
             .then(response => response.json())
             .then(data =>{
-                data.forEach(element => {
-                    const post= document.createElement('div');
-                    post.className= 'post';
-                    post.innerHTML= element;
-                    document.querySelector("#posts").append(post);
-                });
+                data.forEach(add_post);
                     
             })
-            
-            console.log ("hello");
-            start=end+1;
-            end+=10;
-            sleep(5000);
         }
-        function check(){
-            if (window.scrollY+window.innerHeight >= document.body.offsetHeight)
-                console.log("True");
-            else 
-                console.log("False");
+
+        function add_post(element){
+            const post= document.createElement('div');
+            post.className= 'post';
+            post.innerHTML= element;
+            document.querySelector("#posts").append(post);
         }
-        document.addEventListener("DOMContentLoaded",f());
+
+
+        let ok=0;
         window.onscroll=()=>{
-            if (window.scrollY+window.innerHeight >= document.body.offsetHeight)
+            if (window.pageYOffset+window.innerHeight >= document.body.offsetHeight && ok===0){
+                ok=1;
                 f();
+                console.log(ok);
+            }   
+            else 
+                ok=0;
         }
         
     </script>
 </head>
 <body>
-    <h1>Facebook</h1>
-    <h2>Post</h2>
+
     <div id="posts"></div>
     
 </body>
