@@ -29,23 +29,47 @@
         function add_post(element){
             const post= document.createElement('div');
             post.className= 'post';
-            post.innerHTML= element;
+            post.innerHTML= `${element} <button class='hide'>Hide</button`;
             document.querySelector("#posts").append(post);
         }
+        document.addEventListener('click',event=>{
+            const element=event.target;
+            if (element.className==='hide'){
+                let par=element.parentElement;
+                par.style.animationPlayState='running';
+                par.addEventListener('animationend',()=>{
+                    par.remove();
+                })
+            }
+        })
 
-
-        let ok=0;
-        window.onscroll=()=>{
-            if (window.pageYOffset+window.innerHeight >= document.body.offsetHeight && ok===0){
-                ok=1;
-                f();
-                console.log(ok);
-            }   
-            else 
-                ok=0;
-        }
         
     </script>
+    <style>
+        @keyframes hide {
+            0%{
+                opacity: 1;
+                height: 100%;
+                line-height: 100%;
+                padding: 20px;
+                margin: 10px;
+            }
+            75%{
+                
+            }
+            100%{
+                opacity: 0;
+                line-height: 0px;
+                height: 0px;
+                padding: 0px;
+                margin: 0px;
+            } 
+         }
+        .post{
+            animation: hide 2s ;
+            animation-play-state: paused;
+        }
+    </style>
 </head>
 <body>
 
