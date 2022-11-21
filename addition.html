@@ -7,6 +7,36 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @keyframes change {
+            0%{
+                left:100px;
+            }
+            100%{
+                left: 300px;
+            }
+        }
+        #app{
+            text-align: center;
+        }
+        #problem{
+            font-size: 50px;
+            position: relative;
+        }
+        .active{
+            animation: change 5s;
+            animation-play-state: paused;
+            animation-iteration-count: 1;
+        }
+        .wrong{
+            color: red;
+        }
+        #win{
+            font-size:70px;
+            text-align: center;
+            color:green;
+        }
+    </style>
     <title>Counter</title>
 </head>
 <body>
@@ -16,10 +46,11 @@
         
         function App(){
             const [num, setState]=React.useState({
-                num1: 1,
-                num2: 2,
+                num1: Math.ceil(Math.random()*10),
+                num2: Math.ceil(Math.random()*10),
                 response: "",
                 score: 0,
+                wrong: false,
             });
             function upd(event){
                 setState({
@@ -28,31 +59,64 @@
                 })
             }
 
+            function reset(){
+                setState({
+                    response: "",
+                    score: 0,
+                    wrong: false,
+                    num1: Math.ceil(Math.random()*10),
+                    num2: Math.ceil(Math.random()*10),
+                })
+            }
+
             function check(event){
                 if (event.key==="Enter"){
                     const ans= parseInt(num.response);
                     if (num.num1+num.num2=== ans){
-                        setState({
-                            ...num,
-                            num1: Math.ceil(Math.random()*10),
-                            num2: Math.ceil(Math.random()*10),
-                            score: num.score+1,
-                            response: "",
+                        const tmp=document.querySelector("#problem");
+                        tmp.classList.add('active');
+                        tmp.style.animationPlayState='running';
+                        // console.log(tmp.style.animationPlayState);
+                        tmp.addEventListener('animationend',()=>{
+                            setState({
+                                ...num,
+                                num1: Math.ceil(Math.random()*10),
+                                num2: Math.ceil(Math.random()*10),
+                                score: num.score+1,
+                                response: "",
+                                wrong: false,
+                            })
+                            console.log(1);
+                            // tmp.style.animationPlayState='paused';
+                            tmp.classList.remove('active');
+                            // console.log(tmp.style.animationend);
                         })
+                        // console.log(1);
+
                     } 
                     else{
-                        alert("Ngu");
+                        // alert("Ngu");
                         setState({
                             ...num,
                             score: num.score-1,
+                            wrong: true,
                         })
                     }
                 }
             }
 
+            if (num.score===3){
+                return (
+                    <div id="win">
+                        <div>You Won!</div>
+                        <button onClick={reset}>Play again?</button>
+                    </div>
+                );
+            }
+
             return (
                 <div>
-                    <div>{num.num1}+{num.num2}</div>
+                    <div className={num.wrong ? "wrong": ""} id="problem">{num.num1}+{num.num2}</div>
                     <input autoFocus={true} onKeyPress={check} onChange={upd} value={num.response}/>
                     <div>Your IQ: {num.score}</div>
                 </div>
