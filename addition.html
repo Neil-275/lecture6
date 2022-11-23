@@ -8,13 +8,24 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        @keyframes change {
+        @keyframes change1 {
             0%{
-                left:100px;
+                transform: translate(0px,0px);
+                opacity: 1;
             }
             100%{
-                left: 300px;
+                transform: translate(150px,0px);
+                opacity: 0;
             }
+        }
+        @keyframes change2 {
+            0%{
+                transform: translate(-150px,0px);
+            }
+            100%{
+                transform:translate(0px,0px);
+            }
+            
         }
         #app{
             text-align: center;
@@ -23,13 +34,18 @@
             font-size: 50px;
             position: relative;
         }
-        .active{
-            animation: change 5s;
-            animation-play-state: paused;
+        .active1{
+            animation: change1 0.25s;
+            /* animation-play-state: paused; */
+            animation-iteration-count: 1;
+        }
+        .active2{
+            animation: change2 0.25s;
+            /* animation-play-state: paused; */
             animation-iteration-count: 1;
         }
         .wrong{
-            color: red;
+            background-color: red;
         }
         #win{
             font-size:70px;
@@ -74,25 +90,31 @@
                     const ans= parseInt(num.response);
                     if (num.num1+num.num2=== ans){
                         const tmp=document.querySelector("#problem");
-                        tmp.classList.add('active');
-                        tmp.style.animationPlayState='running';
-                        // console.log(tmp.style.animationPlayState);
-                        tmp.addEventListener('animationend',()=>{
-                            setState({
-                                ...num,
-                                num1: Math.ceil(Math.random()*10),
-                                num2: Math.ceil(Math.random()*10),
-                                score: num.score+1,
-                                response: "",
-                                wrong: false,
-                            })
-                            console.log(1);
-                            // tmp.style.animationPlayState='paused';
-                            tmp.classList.remove('active');
-                            // console.log(tmp.style.animationend);
-                        })
-                        // console.log(1);
-
+                        tmp.classList.add('active1');
+                        tmp.onanimationend=()=>{
+                            if (tmp.classList.contains('active2')==false){
+                                setState({
+                                    ...num,
+                                    num1: Math.ceil(Math.random()*10),
+                                    num2: Math.ceil(Math.random()*10),
+                                    score: num.score+1,
+                                    response: "",
+                                    wrong: false,
+                                })
+                                console.log(123);
+                                // tmp.style.animationPlayState='paused';
+                                tmp.classList.remove('active1');
+                                tmp.classList.add('active2');
+                                // console.log(tmp.classList.contains('active2'));
+                                // tmp.style.animationPlayState='running';
+                            }
+                            else {
+                                tmp.classList.remove('active2');
+                                // console.log(2);
+                                // console.log(tmp.classList.contains('active2'));
+                            }
+                                
+                        }            
                     } 
                     else{
                         // alert("Ngu");
@@ -105,11 +127,11 @@
                 }
             }
 
-            if (num.score===3){
+            if (num.score===1){
                 return (
                     <div id="win">
                         <div>You Won!</div>
-                        <button onClick={reset}>Play again?</button>
+                        <button autoFocus={true} onClick={reset}>Play again?</button>
                     </div>
                 );
             }
@@ -118,7 +140,8 @@
                 <div>
                     <div className={num.wrong ? "wrong": ""} id="problem">{num.num1}+{num.num2}</div>
                     <input autoFocus={true} onKeyPress={check} onChange={upd} value={num.response}/>
-                    <div>Your IQ: {num.score}</div>
+                    <div>Your IQ: <strong>{num.score}</strong></div>
+                   
                 </div>
                 
             );

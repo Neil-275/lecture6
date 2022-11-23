@@ -21,22 +21,26 @@
 
         h1{
             position: relative;
+            
+        }
+        .active{
             animation-name: grow;
             animation-duration: 2s;
-            animation-fill-mode: forwards;
-            animation-iteration-count: infinite;
+            animation-iteration-count: 1;
         }
     </style>
     <script>
         document.addEventListener("DOMContentLoaded",()=>{
         let h1=document.querySelector('h1');
         let bt=document.querySelector('button');
-            h1.style.animationPlayState='paused';
-        bt.onclick=()=>{
-            if (h1.style.animationPlayState==='paused')
-                h1.style.animationPlayState='running';
-            else 
-                h1.style.animationPlayState='paused';   
+        bt.onkeypress=()=>{
+            if (event.key==='Enter')
+            h1.classList.add('active');
+            h1.onanimationend=()=>{
+                console.log(1);
+                console.log(123);
+                h1.classList.remove('active');
+            }
         }
     })
     </script>
